@@ -46,6 +46,13 @@ const Home = () => {
       <h5 className="text-md md:text-2xl font-light text-zinc-400">
         Choose one language from the above.
       </h5>
+      <Button
+        className="text-2xl p-[1.5rem]"
+        onClick={() => navigate("/dashboard")}
+        variant={"outline"}
+      >
+        &#8962; Go to Dashboard
+      </Button>
     </div>
   );
 };

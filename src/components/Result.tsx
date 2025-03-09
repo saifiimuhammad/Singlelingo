@@ -1,10 +1,14 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { clearState } from "@/redux/slices";
 import { countMatchingElements } from "@/utils/features";
+import { useEffect, useRef } from "react";
+import { supabase } from "@/db/db";
 
 const Result = () => {
+  const params = useSearchParams()[0].get("language") as LangType;
+
   const { words, result } = useSelector(
     (state: { root: StateType }) => state.root
   );
@@ -17,11 +21,57 @@ const Result = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const hasSavedResult = useRef(false);
 
   const handleBackNavigation = () => {
     navigate("/");
     dispatch(clearState());
   };
+
+  const setLang = (lang: LangType): string => {
+    switch (lang) {
+      case "hi":
+        return "hindi";
+      case "ur":
+        return "urdu";
+      case "ja":
+        return "japanese";
+      case "fr":
+        return "french";
+      case "es":
+        return "spanish";
+      default:
+        return "english";
+    }
+  };
+
+  const addResult = async () => {
+    if (hasSavedResult.current) return;
+    hasSavedResult.current = true;
+
+    const user = await supabase.auth.getUser();
+    if (user) {
+      const { error } = await supabase
+        .from("Result")
+        .insert([
+          {
+            status: percentage > 60,
+            percentage: percentage,
+            answers: result,
+            correct_answers: words.map((word) => word.meaning),
+            language: setLang(params),
+          },
+        ])
+        .select();
+      if (error) throw error;
+    } else {
+      console.log("User is not logged in");
+    }
+  };
+
+  useEffect(() => {
+    addResult();
+  }, []);
 
   return (
     <div className="h-screen w-full flex items-center justify-center flex-col lg:flex-row lg:gap-x-8 lg:px-12">

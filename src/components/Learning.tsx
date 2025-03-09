@@ -82,7 +82,9 @@ const Learning = () => {
       <Button
         className="mt-12 w-full"
         onClick={
-          count === words.length - 1 ? () => navigate("/quiz") : nextHandler
+          count === words.length - 1
+            ? () => navigate(`/quiz?language=${params}`)
+            : nextHandler
         }
       >
         {count === words.length - 1 ? "Test yourself" : "Next Word"}

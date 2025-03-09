@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { saveResult } from "@/redux/slices";
@@ -8,6 +8,7 @@ const Quiz = () => {
   const [result, setResult] = useState<string[]>([]);
   const [count, setCount] = useState<number>(0);
   const [ans, setAns] = useState<string>("");
+  const params = useSearchParams()[0].get("language") as LangType;
 
   const { words } = useSelector((state: { root: StateType }) => state.root);
 
@@ -26,7 +27,7 @@ const Quiz = () => {
   };
 
   useEffect(() => {
-    if (count + 1 > words.length) navigate("/result");
+    if (count + 1 > words.length) navigate(`/result?language=${params}`);
     dispatch(saveResult(result));
   }, [result]);
 
