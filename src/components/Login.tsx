@@ -58,12 +58,12 @@ const Login = () => {
             password: data.password,
           });
         if (error) throw error;
-        localStorage.setItem("user", loginData);
+        localStorage.setItem("user", JSON.stringify(loginData?.user));
         alert("Login successful");
         window.location.reload();
         navigate("/");
       } else {
-        const { data: signUpData, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email: data.email,
           password: data.password,
           options: {
@@ -78,8 +78,13 @@ const Login = () => {
         setIsLogin(true);
       }
     } catch (err) {
-      console.error("Error:", err.message);
-      alert(err.message);
+      if (err instanceof Error) {
+        console.error("Error:", err.message);
+        alert(err.message);
+      } else {
+        console.error("An unknown error occurred");
+        alert("An unknown error occurred");
+      }
     }
   };
 
